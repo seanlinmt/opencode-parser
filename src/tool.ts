@@ -1,6 +1,7 @@
 import { tool } from "@opencode-ai/plugin"
 import { parseFile } from "./orchestrator.ts"
 import type { ParseResult } from "./types.ts"
+import { mkdirSync, writeFileSync } from "node:fs"
 
 export const parseTool = tool({
   description: "Parse and extract text/content from any file type. Supports PDF, DOCX, XLSX, CSV, PPTX, images (OCR), EPUB, HTML, XML, Markdown, Jupyter Notebooks (.ipynb), ZIP, RAR, 7z, TAR, GZip, and plain text files. Returns structured output with metadata, extracted text, tables, and optional OCR.",
@@ -53,10 +54,9 @@ export const parseTool = tool({
 
       const dir = resolvedOutput.substring(0, resolvedOutput.lastIndexOf("/"))
       if (dir) {
-        const { mkdirSync } = await import("fs")
         mkdirSync(dir, { recursive: true })
       }
-      Bun.write(resolvedOutput, fullOutput)
+      writeFileSync(resolvedOutput, fullOutput, "utf8")
     }
 
     return output

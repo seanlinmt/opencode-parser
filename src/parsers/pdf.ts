@@ -7,16 +7,17 @@ export async function parsePdf(buffer: Uint8Array, fileName: string, fileSize: n
     max: options.maxPages ?? 0,
   })
 
+  const info = (data.info ?? {}) as Record<string, string | undefined>
   const meta: FileMeta = {
-    title: data.info?.Title,
-    author: data.info?.Author,
-    created: data.info?.CreationDate,
-    modified: data.info?.ModDate,
+    title: info.Title,
+    author: info.Author,
+    created: info.CreationDate,
+    modified: info.ModDate,
     pages: data.numpages,
     format: "PDF",
   }
 
-  const text = cleanText(data.text)
+  const text = cleanText(data.text ?? "")
 
   return createResult("pdf", fileName, fileSize, meta, text, {
     maxChars: options.maxChars,
@@ -25,5 +26,6 @@ export async function parsePdf(buffer: Uint8Array, fileName: string, fileSize: n
 
 async function importPdfParse() {
   const mod = await import("pdf-parse")
-  return mod.default || mod
+  const fn = (mod as { default?: unknown }).default ?? (mod as unknown)
+  return fn as typeof import("pdf-parse").default
 }

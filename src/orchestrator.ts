@@ -9,6 +9,8 @@ import { parseEpub, parseMobi } from "./parsers/ebook.ts"
 import { parseHtml, parseXml, parseMarkdown } from "./parsers/html.ts"
 import { parseIpynb } from "./parsers/ipynb.ts"
 import { parseZip, parseRar, parse7z, parseTar, parseGzip } from "./parsers/archive.ts"
+import { readFile } from "node:fs/promises"
+import { statSync } from "node:fs"
 
 export async function parseFile(options: ParseOptions): Promise<ParseResult> {
   const { filePath, maxChars } = options
@@ -18,10 +20,14 @@ export async function parseFile(options: ParseOptions): Promise<ParseResult> {
   let fileName: string
 
   try {
-    const file = Bun.file(filePath)
-    fileSize = file.size
     fileName = filePath.split(/[/\\]/).pop() || filePath
-    fileBuffer = await file.arrayBuffer().then((ab) => new Uint8Array(ab))
+    try {
+      fileSize = statSync(filePath).size
+    } catch {
+      fileSize = 0
+    }
+    const buf = await readFile(filePath)
+    fileBuffer = new Uint8Array(buf)
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     return {
