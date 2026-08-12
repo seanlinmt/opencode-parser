@@ -6,15 +6,24 @@ https://github.com/user-attachments/assets/ed9d6ee7-d30b-43d5-83e0-4e09dafaa422
 
 ## Install
 
-```json
-{
-  "plugin": ["opencode-parser"]
-}
+1. Clone this repository into your opencode plugins directory:
+```bash
+git clone https://github.com/seanlinmt/opencode-parser.git ~/.config/opencode/plugins/opencode-parser
+```
+2. Install dependencies and build:
+```bash
+cd ~/.config/opencode/plugins/opencode-parser
+npm install
+npm run build
 ```
 
-Or install via CLI: `opencode plugin opencode-parser -g`
+Update `opencode.json`:
 
-Or copy `src/` into `.opencode/tools/` for a local zero-config setup.
+```json
+{
+  "plugin": ["./plugins/opencode-parser/dist/index.js"]
+}
+```
 
 ## Supported formats
 
@@ -25,7 +34,7 @@ Or copy `src/` into `.opencode/tools/` for a local zero-config setup.
 | Excel | `.xlsx`, `.xls`, `.csv`, `.tsv` | Text, tables, sheet names |
 | PowerPoint | `.pptx`, `.ppt` | Slide text, speaker notes |
 | Images | `.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`, `.bmp`, `.tiff` | OCR text (opt-in) |
-| EPUB | `.epub` | Full text with heading structure |
+| eBooks | `.epub`, `.mobi` | Full text with heading structure |
 | HTML | `.html`, `.htm` | Body text, headings |
 | XML | `.xml` | Stripped text content |
 | Markdown | `.md` | Raw text |
@@ -70,7 +79,7 @@ parse @report.pdf and save the full output
 4. Tables become readable markdown
 5. Large content is **truncated gracefully** with a note to the LLM
 
-All 15+ format handlers return the same output structure, so the LLM gets consistent results regardless of file type.
+All 30+ supported formats return the same output structure, so the LLM gets consistent results regardless of file type.
 
 ## Development
 
